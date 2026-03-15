@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ResumeAI — Smart Resume Parser</title>
+  <meta name="description" content="AI-powered resume parser using spaCy NLP. Upload PDF/DOCX resumes and extract structured candidate data instantly."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">⚡</div>
+      <span class="brand-name">Resume<span class="accent">AI</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#upload" class="nav-link active" onclick="showSection('upload')">Upload</a>
+      <a href="#candidates" class="nav-link" onclick="showSection('candidates')">Candidates</a>
+      <a href="#search" class="nav-link" onclick="showSection('search')">Search</a>
+    </div>
+    <div class="nav-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="status-text" id="statusText">Checking...</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🤖 Powered by spaCy NLP + Flask + PostgreSQL</div>
+      <h1 class="hero-title">Smart Resume Parser<br/><span class="gradient-text">Extract. Store. Discover.</span></h1>
+      <p class="hero-sub">Upload any PDF or DOCX resume and instantly extract Name, Email, Phone, Skills, Education &amp; Experience using advanced NER.</p>
+      <div class="hero-stats" id="heroStats">
+        <div class="stat-card"><span class="stat-num" id="totalCount">—</span><span class="stat-label">Candidates</span></div>
+        <div class="stat-card"><span class="stat-num">50+</span><span class="stat-label">Skills Detected</span></div>
+        <div class="stat-card"><span class="stat-num">NER</span><span class="stat-label">spaCy Model</span></div>
+        <div class="stat-card"><span class="stat-num">PDF+DOCX</span><span class="stat-label">Supported</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── UPLOAD SECTION ── -->
+    <section id="section-upload" class="section active">
+      <div class="section-header">
+        <h2>📄 Upload Resume</h2>
+        <p>Drag &amp; drop or click to select a PDF or DOCX file</p>
+      </div>
+
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📂</div>
+        <p class="upload-title">Drop your resume here</p>
+        <p class="upload-sub">Supports <strong>PDF</strong> and <strong>DOCX</strong> · Max 16 MB</p>
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Browse File</button>
+        <input type="file" id="fileInput" accept=".pdf,.docx" hidden onchange="handleFileSelect(this)"/>
+      </div>
+
+      <div class="upload-progress" id="uploadProgress" style="display:none">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <p id="progressText">Uploading...</p>
+      </div>
+
+      <div class="result-card" id="resultCard" style="display:none"></div>
+    </section>
+
+    <!-- ── CANDIDATES SECTION ── -->
+    <section id="section-candidates" class="section">
+      <div class="section-header">
+        <h2>👥 All Candidates</h2>
+        <p>All parsed resumes stored in PostgreSQL</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-outline" onclick="loadCandidates()">🔄 Refresh</button>
+        <span class="toolbar-info" id="candidateCount"></span>
+      </div>
+      <div class="candidates-grid" id="candidatesGrid">
+        <div class="loading-spinner">Loading...</div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- ── SEARCH SECTION ── -->
+    <section id="section-search" class="section">
+      <div class="section-header">
+        <h2>🔍 Search Candidates</h2>
+        <p>Filter by skill or name across the database</p>
+      </div>
+      <div class="search-box">
+        <div class="input-group">
+          <label>Skill</label>
+          <input type="text" id="searchSkill" placeholder="e.g. Python, React, Docker" class="form-input"/>
+        </div>
+        <div class="input-group">
+          <label>Name</label>
+          <input type="text" id="searchName" placeholder="e.g. John Doe" class="form-input"/>
+        </div>
+        <button class="btn btn-primary" onclick="searchCandidates()">Search</button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </section>
+
+  </main>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- CANDIDATE DETAIL MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
